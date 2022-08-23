@@ -53,26 +53,7 @@ bash ./setup.sh
 
 ## Server Setup Guide
 
-<table>
-    <tbody>
-        <tr>
-            <td><b><a href="#option-a--set-up-a-pi-hole-ad-blocking-vpn-server-with-a-static-anycast-ip-on-oracle-cloud-infrastructures-always-free-usage-tier">Option&nbsp;A</a></b></td>
-            <td>
-                Set up a Pi-Hole Ad Blocking VPN Server with a static Anycast IP on Google Cloud's Always Free Usage Tier.<br>
-                <b>Fastest</b>: beefier server specs, premium network connectivity with an anycast static IP<br>
-                <b>Cheapest</b>: $0 to run with Full or Split Tunnel configuration
-            </td>
-        </tr>
-        <tr>
-            <td><b><a href="#option-b--set-up-a-pi-hole-ad-blocking-vpn-server-behind-your-router-at-home">Option&nbsp;B</a></b></td>
-            <td>Set up a Pi-Hole Ad Blocking VPN Server behind your router at home.</td>
-        </tr>
-    </tbody>
-</table>
-
----
-
-### OPTION A <br> Set up a Pi-Hole Ad Blocking VPN Server with a static Anycast IP on Oracle Cloud Infrastructure's Always Free Usage Tier
+### Set up a Pi-Hole Ad Blocking VPN Server with a static Anycast IP on Oracle Cloud Infrastructure's Always Free Usage Tier
 
 <img src="./images/upfront-cost.svg" width="90" align="right">
 
@@ -85,22 +66,6 @@ This simple 2 step process will get you up and running:
 - **STEP 2** [Software Installation & Configuration](./ORACLE-CLOUD.md#connect-to-oracle-cloud-instance)
 
 There is no value in setting up DNS over HTTPS or DNS over TLS on a cloud hosted instance, because your DNS requests to the cloud are encrypted by Wireguard.
-
----
-
-### OPTION B <br> Set up a Pi-Hole Ad Blocking VPN Server behind your router at home.
-
-- **STEP 1** A new install of Ubuntu 22.04 or 20.04 (preferably not Raspbian or Debian, for lack of a Wireguard Linux Kernel Module), and have your Router forward all incoming UDP connections on Port 51515 to this device.
-
-- **STEP 2** [Software Installation & Configuration](./ORACLE-CLOUD.md#connect-to-oracle-cloud-instance)
-
-- **STEP 3** [Enable DNS over HTTPS](https://docs.pi-hole.net/guides/dns-over-https/)
-
-- **STEP 4** Bridge your Local LAN with your Wireguard network:
-
-  - Open the Wireguard Application on your Client Device, and edit the VPN Profile.
-
-  - Change the **Allowed IPs** to include your LAN subnet. For example, if your router's IP address is `192.168.86.1`, and your Ubuntu 20.04 Wireguard server has an IP somewhere in the range of `192.168.86.2` to `192.168.86.255`, your subnet is `192.168.86.0/24`. If you add `192.168.86.0/24` to the comma separated list of **Allowed IPs** in the Client Configuration file, you will be able to ping any device with an IP address between `192.168.86.1` to `192.168.86.254` over your Wireguard connection.
 
 ---
 
@@ -152,6 +117,7 @@ All credits goes to [Rajann Patel](https://github.com/rajannpatel).
 I'm not affiliated with Oracle to market the Oracle Cloud Infrastructure. I do not receive any benefits from Oracle, if you made any purchase in future.
 
 ## SPONSORSHIP / DONATIONS
+
 I would appreciate if you support the projects that made this possible.
 
 Pi-hole Project: https://pi-hole.net/donate/
