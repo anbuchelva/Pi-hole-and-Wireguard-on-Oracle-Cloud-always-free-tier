@@ -25,11 +25,11 @@ Install the [official Wireguard Android App](https://play.google.com/store/apps/
 
 To configure a persistent tunnel on Android, that reconnects after the device restarts, you have to edit the system-wide VPN settings:
 
-| Device | Steps to enable Always-on VPN Tunnel |
-| :------| :------------------------------------|
-| Pixel Phones | **Settings** > **Network & Internet** > **Advanced** > **VPN** > **⚙** (for Wireguard) <br>enable **Always-on VPN** |
+| Device         | Steps to enable Always-on VPN Tunnel                                                                                         |
+| :------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| Pixel Phones   | **Settings** > **Network & Internet** > **Advanced** > **VPN** > **⚙** (for Wireguard) <br>enable **Always-on VPN**          |
 | Samsung Phones | **Settings** > **Connections** > **More Connection Settings** > **VPN** > **⚙** (for Wireguard) <br>enable **Always-on VPN** |
-| Huawei Phones | **Settings** > **More connections** > **VPN** > press and hold (on Wireguard) > **Edit** <br>enable **Always-on VPN** |
+| Huawei Phones  | **Settings** > **More connections** > **VPN** > press and hold (on Wireguard) > **Edit** <br>enable **Always-on VPN**        |
 
 ## Arch Linux
 
@@ -41,12 +41,12 @@ From the Arch User Repository, you can install **networkmanager-wireguard-git**.
 
 ### 2. Import the configuration
 
-  1. Right click on Network Manager applet
-  2. Select **Modify connections**
-  3. At the bottom left, click on the `+` symbol
-  4. From the dropdown menu, select **Import saved VPN configuration** and confirm
-  5. Select the **wg0-client-1.conf** file and confirm.
-  6. You are free to change the name of the VPN configuration if you want. Once done, click **Save** and you should see the VPN connection appear in the list.
+1. Right click on Network Manager applet
+2. Select **Modify connections**
+3. At the bottom left, click on the `+` symbol
+4. From the dropdown menu, select **Import saved VPN configuration** and confirm
+5. Select the **wg0-client-1.conf** file and confirm.
+6. You are free to change the name of the VPN configuration if you want. Once done, click **Save** and you should see the VPN connection appear in the list.
 
 ## iOS
 
@@ -57,9 +57,9 @@ Install the [official Wireguard iOS App](https://itunes.apple.com/us/app/wiregua
 
 Steps to enable Always-on VPN Tunnel:
 
-  - Edit the Tunnel in the Wireguard App
-  - Click **Edit** on the top right
-  - Scroll down to **On-Demand Activation** and Enable **Cellular** and **Wi-Fi** toggles
+- Edit the Tunnel in the Wireguard App
+- Click **Edit** on the top right
+- Scroll down to **On-Demand Activation** and Enable **Cellular** and **Wi-Fi** toggles
 
 ## macOS
 

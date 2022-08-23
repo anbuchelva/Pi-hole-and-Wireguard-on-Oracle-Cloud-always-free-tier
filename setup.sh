@@ -41,7 +41,9 @@ function addClient() {
 
 	# Read MTU value
 	if [ -f "/sys/class/net/${SERVER_WG_NIC}/mtu" ]; then
-		CLIENT_MTU="MTU = $(cat /sys/class/net/${SERVER_WG_NIC}/mtu)"
+		#CLIENT_MTU="MTU = $(cat /sys/class/net/${SERVER_WG_NIC}/mtu)"
+		# client MTU has higher value
+		CLIENT_MTU="MTU = 1420"
 	fi
 
 	# Create client file and add the server as a peer
@@ -212,6 +214,39 @@ SERVER_PUB_KEY=$SERVER_PUB_KEY" >/etc/wireguard/params
 
 source /etc/wireguard/params
 
+# add additional configs for oracle cloud
+mkdir /etc/wireguard/ipt
+
+echo "#!/bin/bash
+
+iptables -t nat -I POSTROUTING 1 -s $SERVER_WG_IPV4/24 -o $SERVER_PUB_NIC -j MASQUERADE
+iptables -I INPUT 1 -i $SERVER_WG_NIC -j ACCEPT
+iptables -I FORWARD 1 -i $SERVER_PUB_NIC -o $SERVER_WG_NIC -j ACCEPT
+iptables -I FORWARD 1 -i $SERVER_WG_NIC -o $SERVER_PUB_NIC -j ACCEPT
+iptables -I INPUT 1 -i $SERVER_PUB_NIC -p udp --dport $SERVER_PORT -j ACCEPT
+
+ip6tables -t nat -I POSTROUTING 1 -s $SERVER_WG_IPV6/64 -o $SERVER_PUB_NIC -j MASQUERADE
+ip6tables -I INPUT 1 -i $SERVER_WG_NIC -j ACCEPT
+ip6tables -I FORWARD 1 -i $SERVER_PUB_NIC -o $SERVER_WG_NIC -j ACCEPT
+ip6tables -I FORWARD 1 -i $SERVER_WG_NIC -o $SERVER_PUB_NIC -j ACCEPT" > /etc/wireguard/ipt/start.sh
+
+echo "#!/bin/bash
+
+iptables -t nat -D POSTROUTING -s $SERVER_WG_IPV4/24 -o $SERVER_PUB_NIC -j MASQUERADE
+iptables -D INPUT -i $SERVER_WG_NIC -j ACCEPT
+iptables -D FORWARD -i $SERVER_PUB_NIC -o $SERVER_WG_NIC -j ACCEPT
+iptables -D FORWARD -i $SERVER_WG_NIC -o $SERVER_PUB_NIC -j ACCEPT
+iptables -D INPUT -i $SERVER_PUB_NIC -p udp --dport $SERVER_PORT -j ACCEPT
+
+# IPv6 rules (uncomment) #
+ip6tables -t nat -D POSTROUTING -s $SERVER_WG_IPV6/64 -o $SERVER_PUB_NIC -j MASQUERADE
+ip6tables -D INPUT -i $SERVER_WG_NIC -j ACCEPT
+ip6tables -D FORWARD -i $SERVER_PUB_NIC -o $SERVER_WG_NIC -j ACCEPT
+ip6tables -D FORWARD -i $SERVER_WG_NIC -o $SERVER_PUB_NIC -j ACCEPT" > /etc/wireguard/ipt/stop.sh
+
+chmod 744 /etc/wireguard/ipt/start.sh
+chmod 744 /etc/wireguard/ipt/stop.sh
+
 # Add server interface
 echo "[Interface]
 Address = $SERVER_WG_IPV4/24,$SERVER_WG_IPV6/64
@@ -224,8 +259,8 @@ if [ -x "$(command -v firewall-cmd)" ]; then
 	echo "PostUp = firewall-cmd --add-port $SERVER_PORT/udp && firewall-cmd --add-rich-rule='rule family=ipv4 source address=$FIREWALLD_IPV4_ADDRESS/24 masquerade' && firewall-cmd --add-rich-rule='rule family=ipv6 source address=$FIREWALLD_IPV6_ADDRESS/24 masquerade'
 PostDown = firewall-cmd --remove-port $SERVER_PORT/udp && firewall-cmd --remove-rich-rule='rule family=ipv4 source address=$FIREWALLD_IPV4_ADDRESS/24 masquerade' && firewall-cmd --remove-rich-rule='rule family=ipv6 source address=$FIREWALLD_IPV6_ADDRESS/24 masquerade'" >>"/etc/wireguard/$SERVER_WG_NIC.conf"
 else
-	echo "PostUp = iptables -A FORWARD -i $SERVER_WG_NIC -j ACCEPT; iptables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -A FORWARD -i $SERVER_WG_NIC -j ACCEPT; ip6tables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE
-PostDown = iptables -D FORWARD -i $SERVER_WG_NIC -j ACCEPT; iptables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -D FORWARD -i $SERVER_WG_NIC -j ACCEPT; ip6tables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE" >>"/etc/wireguard/$SERVER_WG_NIC.conf"
+	echo "PostUp = /etc/wireguard/ipt/start.sh; iptables -A FORWARD -i $SERVER_WG_NIC -j ACCEPT; iptables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -A FORWARD -i $SERVER_WG_NIC -j ACCEPT; ip6tables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE
+PostDown = /etc/wireguard/ipt/stop.sh; iptables -D FORWARD -i $SERVER_WG_NIC -j ACCEPT; iptables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -D FORWARD -i $SERVER_WG_NIC -j ACCEPT; ip6tables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE" >>"/etc/wireguard/$SERVER_WG_NIC.conf"
 fi
 
 # Enable routing on the server

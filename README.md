@@ -1,4 +1,6 @@
-# Full Tunnel or Split Tunnel IPv6 + IPv4 Wireguard VPN connections to an ad blocking Pi-Hole server, from your Android, iOS, Chrome OS, Linux, macOS, & Windows devices
+# Pi-Hole with Wireguard using Oracle Cloud Infrastructure
+
+Full Tunnel or Split Tunnel IPv6 + IPv4 Wireguard VPN connections to an ad blocking Pi-Hole server, from your Android, iOS, Chrome OS, Linux, macOS, & Windows devices
 
 <img src="./images/data-privacy-risk.svg" width="125" align="right">
 
@@ -7,12 +9,16 @@ The goal of this project is to enable you to safely and privately use the Intern
 Both Full Tunnel (all traffic) and Split Tunnel (DNS traffic only) VPN connections provide DNS based ad-blocking over an encrypted connection to the cloud. The differences are:
 
 - A Split Tunnel VPN allows you to interact with devices on your Local Network (such as a Chromecast or Roku).
-- A Full Tunnel VPN can help bypass misconfigured proxies on corporate WiFi networks, and protects you from Man-In-The-Middle SSL proxies.
+- A Full Tunnel VPN can help bypass misconfigured proxies on corporate WiFi networks and protects you from Man-In-The-Middle SSL proxies.
 
-| Tunnel Type | Data Usage | Server CPU Load | Security | Ad Blocking |
-| -- | -- | -- | -- | -- |
-| full | +10% overhead for vpn | low | 100% encryption | yes
-| split | just kilobytes per day | very low | dns encryption only | yes
+| Tunnel Type | Data Usage             | Server CPU Load | Security            | Ad Blocking | Bandwidth usage        |
+| ----------- | ---------------------- | --------------- | ------------------- | ----------- | ---------------------- |
+| full        | +10% overhead for vpn  | low             | 100% encryption     | yes         | Local & Oracle Network |
+| split       | just kilobytes per day | very low        | dns encryption only | yes         | Local + few KBs on OCI |
+
+When you use full tunnel, you consume bandwidth on your local network as well as from Oracle Cloud network. Oracle offers 10 TB network traffic per month with cap on speed around 10 Mbps. Using the split tunnel consumes data only from your local network with some MB data from Oracle Cloud network, but your internet speed is not capped.
+
+Oracle Cloud Infrastructure provides more than the cloud instance. Check the full list [here](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm).
 
 While Pi-hole was originally authored to run on a Raspberry Pi, people have followed this guide to deploy securely hosted instances of Pi-hole with VPN only access on Google Cloud, AWS, Heroku, Azure, Linode, Digital Ocean, Oracle Cloud, and on spare hardware at home.
 
@@ -20,24 +26,24 @@ While Pi-hole was originally authored to run on a Raspberry Pi, people have foll
 
 ## Quickstart
 
-1.  Install [Ubuntu 20.04](https://ubuntu.com/download/server) if you want to benefit from the Wireguard Module natively shipped in the Linux Kernel. Ubuntu 18.04, Debian, and other Linux distributions do not yet have Wireguard implemented in the kernel-space, as of August 29, 2020.
+1. I suggest using Ubuntu 22.04 image provided by Oracle, you can also use Ubuntu 20.04 as the Wireguard Module natively shipped in the Linux Kernel.
 
-2.  Download and execute **setup.sh** from this repository to:
+2. Download and execute **setup.sh** from this repository to:
 
-    1.  install the latest Wireguard packages
+   1. install the latest Wireguard packages
 
-    2.  install the latest Pi-Hole, and configure it to accept DNS requests from the Wireguard interface
+   2. install the latest Pi-Hole, and configure it to accept DNS requests from the Wireguard interface
 
-    3.  display a QR Code for 1 Split Tunnel VPN Profile, so you can import the VPN Profile to your device without having to type anything
+   3. display a QR Code for 1 Split Tunnel VPN Profile, so you can import the VPN Profile to your device without having to type anything
 
 ```bash
 sudo su -
-curl -O https://raw.githubusercontent.com/rajannpatel/Pi-Hole-on-Google-Compute-Engine-Free-Tier-with-Full-Tunnel-and-Split-Tunnel-Wireguard-VPN-Configs/master/setup.sh
+curl -O https://raw.githubusercontent.com/anbuchelva/Pi-hole-and-Wireguard-on-Oracle-Cloud-always-free-tier/master/setup.sh
 chmod +x setup.sh
-bash ./setup.sh 
+bash ./setup.sh
 ```
 
-3.  Make sure your router or firewall is forwarding incoming UDP packets on Port 51515 to the Ubuntu 20.04 Server, that you ran the **setup.sh** script on.
+3.  Make sure your router or firewall is forwarding incoming UDP packets on Port 51515 to the Ubuntu Server, that you ran the **setup.sh** script on.
 
 4.  Create another VPN Client Profile by running `./setup.sh` again, you can create 253 profiles without modifying the script.
 
@@ -50,11 +56,11 @@ bash ./setup.sh
 <table>
     <tbody>
         <tr>
-            <td><b><a href="#option-a--set-up-a-pi-hole-ad-blocking-vpn-server-with-a-static-anycast-ip-on-google-clouds-always-free-usage-tier">Option&nbsp;A</a></b></td>
+            <td><b><a href="#option-a--set-up-a-pi-hole-ad-blocking-vpn-server-with-a-static-anycast-ip-on-oracle-cloud-infrastructures-always-free-usage-tier">Option&nbsp;A</a></b></td>
             <td>
-                Set up a Pi-Hole Ad Blocking VPN Server with a static Anycast IP on Google Cloud's Always Free Usage Tier.<br><br>
+                Set up a Pi-Hole Ad Blocking VPN Server with a static Anycast IP on Google Cloud's Always Free Usage Tier.<br>
                 <b>Fastest</b>: beefier server specs, premium network connectivity with an anycast static IP<br>
-                <b>Cheapest</b>: $0 to run with Split Tunnel configuration
+                <b>Cheapest</b>: $0 to run with Full or Split Tunnel configuration
             </td>
         </tr>
         <tr>
@@ -66,29 +72,27 @@ bash ./setup.sh
 
 ---
 
-### OPTION A <br> Set up a Pi-Hole Ad Blocking VPN Server with a static Anycast IP on Google Cloud's Always Free Usage Tier
+### OPTION A <br> Set up a Pi-Hole Ad Blocking VPN Server with a static Anycast IP on Oracle Cloud Infrastructure's Always Free Usage Tier
 
 <img src="./images/upfront-cost.svg" width="90" align="right">
 
-You can run your own privacy-first ad blocking service within the **[Free Usage Tier](https://cloud.google.com/free/)** on Google Cloud. **Step 1 of this guide gets you set up with a Google Cloud account, and Step 2 walks you through setting up a full tunnel or split tunnel VPN connection on your Android & iOS devices, and computers.**
+You can run your own privacy-first ad blocking service within the **[Free Usage Tier](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm)** on Oracle Cloud Infrastructure. **Step 1 of this guide gets you set up with a Oracle Cloud account, and Step 2 walks you through setting up a full tunnel or split tunnel VPN connection on your Android & iOS devices, and computers.**
 
 This simple 2 step process will get you up and running:
 
-- **STEP 1** [Google Cloud Login, Account Creation, & Server Provisioning](./GOOGLE-CLOUD.md)
+- **STEP 1** [Oracle Cloud Login, Account Creation, & Server Provisioning](./ORACLE-CLOUD.md#oracle-cloud-account-and-instance-creation)
 
-- **STEP 2** [Software Installation & Configuration](./CONFIGURATION.md)
+- **STEP 2** [Software Installation & Configuration](./ORACLE-CLOUD.md#connect-to-oracle-cloud-instance)
 
 There is no value in setting up DNS over HTTPS or DNS over TLS on a cloud hosted instance, because your DNS requests to the cloud are encrypted by Wireguard.
-
-The performance related technical merits of Option A are outlined in [REASONS.md](./REASONS.md).
 
 ---
 
 ### OPTION B <br> Set up a Pi-Hole Ad Blocking VPN Server behind your router at home.
 
-- **STEP 1** A new install of Ubuntu 20.04 (preferably not Raspbian or Debian, for lack of a Wireguard Linux Kernel Module), and have your Router forward all incoming UDP connections on Port 51515 to this device.
+- **STEP 1** A new install of Ubuntu 22.04 or 20.04 (preferably not Raspbian or Debian, for lack of a Wireguard Linux Kernel Module), and have your Router forward all incoming UDP connections on Port 51515 to this device.
 
-- **STEP 2** [Software Installation & Configuration](./CONFIGURATION.md)
+- **STEP 2** [Software Installation & Configuration](./ORACLE-CLOUD.md#connect-to-oracle-cloud-instance)
 
 - **STEP 3** [Enable DNS over HTTPS](https://docs.pi-hole.net/guides/dns-over-https/)
 
@@ -137,6 +141,12 @@ Replace `txUZ0iqCyu69qQFq08U420hOp3/A4lYtrHVrJrAYBys=` in the command above with
 
 If there is something that can be done better, or if this documentation can be improved in any way, please submit a Pull Request with your fixes or edits.
 
-Contributors should be aware of [REASONS.md](./REASONS.md), which explain the factors behind choices made throughout this guide.
+You may aware that this repository is forked from [Rajann Patel's Google Cloud Repo](https://github.com/rajannpatel/Pi-Hole-on-Google-Compute-Engine-Free-Tier-with-Full-Tunnel-and-Split-Tunnel-Wireguard-VPN-Configs). So, whatever the issues highlighted [there](https://github.com/rajannpatel/Pi-Hole-on-Google-Compute-Engine-Free-Tier-with-Full-Tunnel-and-Split-Tunnel-Wireguard-VPN-Configs/issues) might be applicable here as well.
 
-Please review the [Issues](https://github.com/rajannpatel/Pi-Hole-on-Google-Compute-Engine-Free-Tier-with-Full-Tunnel-and-Split-Tunnel-Wireguard-VPN-Configs/issues) if you are in a position to help others, or participate in improving this project.
+Please feel free to create pull requests if you have better knowlege on networking or Oracle Cloud Instance.
+
+All credits goes to [Rajann Patel](https://github.com/rajannpatel)
+
+## DISCLAIMER
+
+I'm not affiliated with Oracle to market the Oracle Cloud Infrastructure. I do not receive any benefits from Oracle, if you made any purchase in future.
