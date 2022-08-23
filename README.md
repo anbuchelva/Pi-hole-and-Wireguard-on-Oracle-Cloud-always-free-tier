@@ -145,8 +145,17 @@ You may aware that this repository is forked from [Rajann Patel's Google Cloud R
 
 Please feel free to create pull requests if you have better knowlege on networking or Oracle Cloud Instance.
 
-All credits goes to [Rajann Patel](https://github.com/rajannpatel)
+All credits goes to [Rajann Patel](https://github.com/rajannpatel).
 
 ## DISCLAIMER
 
 I'm not affiliated with Oracle to market the Oracle Cloud Infrastructure. I do not receive any benefits from Oracle, if you made any purchase in future.
+
+## SPONSORSHIP / DONATIONS
+I would appreciate if you support the projects that made this possible.
+
+Pi-hole Project: https://pi-hole.net/donate/
+
+Wireguard Project: https://www.wireguard.com/donations/
+
+Ranjann Patel: https://github.com/sponsors/rajannpatel
