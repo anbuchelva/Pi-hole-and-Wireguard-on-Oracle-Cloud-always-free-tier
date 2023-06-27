@@ -114,7 +114,7 @@ All credits goes to [Rajann Patel](https://github.com/rajannpatel).
 
 ## DISCLAIMER
 
-I'm not affiliated with Oracle to market the Oracle Cloud Infrastructure. I do not receive any benefits from Oracle, if you made any purchase in future.
+I have been working for Oracle since November 2022. However, this does not change the fact that I will not receive any benefits if you make any future purchases on the Oracle Cloud Infrastructure.
 
 ## SPONSORSHIP / DONATIONS
 
